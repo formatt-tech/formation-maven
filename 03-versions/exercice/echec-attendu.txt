@@ -1,0 +1,1 @@
+NoClassDefFound com/fasterxml/jackson/annotation

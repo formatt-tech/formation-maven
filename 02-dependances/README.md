@@ -45,6 +45,23 @@ Les commandes se lancent à la racine du dépôt, comme au module 1.
 
 Le journal affiche un arbre. La première ligne est le projet ; chaque niveau d'indentation est une dépendance apportée par la ligne au-dessus. Chaque ligne se lit `groupId:artifactId:type:version:portée`.
 
+Les signes en début de ligne ne servent qu'à dessiner l'arbre :
+
+| Signe | Signification |
+|---|---|
+| `+-` | une dépendance, suivie d'autres au même niveau |
+| `\-` | la **dernière** dépendance de ce niveau |
+| `\|` | la branche du dessus continue plus bas ; ce n'est pas une dépendance |
+
+```text
+appel-service
++- httpclient            ← dépendance du projet, d'autres suivent
+|  +- httpcore           ← apportée par httpclient
+|  +- commons-logging
+|  \- commons-codec      ← dernière apportée par httpclient
+\- junit-jupiter         ← dernière dépendance du projet
+```
+
 Quelles bibliothèques sont arrivées sans être déclarées dans le POM ? Laquelle fournit `HttpHost` ? Quelle portée ont les bibliothèques apportées par JUnit ?
 
 ### 2. Une portée qui protège
