@@ -1,0 +1,29 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Chaque exercice, dans son état de départ, doit se construire : c'est ce que trouve un stagiaire
+  exercices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Construire chaque exercice
+        run: |
+          for pom in */exercice*/pom.xml; do
+            projet=$(dirname "$pom")
+            echo "::group::$projet"
+            ./mvnw -B -ntp -f "$projet" verify
+            echo "::endgroup::"
+          done
