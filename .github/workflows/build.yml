@@ -9,7 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  # Chaque exercice, dans son état de départ, doit se construire : c'est ce que trouve un stagiaire
+  # Chaque exercice dans son état de départ, celui que trouve un stagiaire : il se construit, ou, s'il contient un
+  # echec-attendu.txt, il échoue exprès, et pour la raison écrite dans ce fichier
   exercices:
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +25,20 @@ jobs:
           for pom in */exercice*/pom.xml; do
             projet=$(dirname "$pom")
             echo "::group::$projet"
-            ./mvnw -B -ntp -f "$projet" verify
+            if [ -f "$projet/echec-attendu.txt" ]; then
+              if ./mvnw -B -ntp -f "$projet" verify > build.log 2>&1; then
+                cat build.log
+                echo "::error::$projet devait échouer, il a réussi"
+                exit 1
+              fi
+              if ! grep -qF -f "$projet/echec-attendu.txt" build.log; then
+                cat build.log
+                echo "::error::$projet a échoué, mais pas pour la raison attendue"
+                exit 1
+              fi
+              echo "$projet : échoue comme prévu"
+            else
+              ./mvnw -B -ntp -f "$projet" verify
+            fi
             echo "::endgroup::"
           done
