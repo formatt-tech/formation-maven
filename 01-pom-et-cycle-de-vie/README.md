@@ -1,121 +1,162 @@
 # 1. Le POM et le cycle de vie
 
 **Durée** : 45 minutes.
-**Objectif** : savoir ce que fait vraiment `mvn verify`, d'où viennent les plugins qui travaillent, et où va le jar.
 
-## L'essentiel
+**À la fin de ce module, vous saurez** :
+- ce que Maven fait quand on lance `mvn verify` ;
+- lire le journal de Maven pour savoir quel outil a travaillé, et dans quelle version ;
+- où Maven range ce qu'il produit.
 
-Le **POM** (`pom.xml`) décrit le projet : ses **coordonnées** (`groupId:artifactId:version`), ce qu'il produit (`packaging`), ses dépendances. Il ne décrit presque jamais *comment* construire : Maven le sait déjà.
+## Le point de départ
 
-Maven construit en suivant un **cycle de vie**, une suite de **phases** toujours dans le même ordre :
+Ouvrez le fichier [`exercice/pom.xml`](exercice/pom.xml). C'est le **POM** (*Project Object Model*), la fiche d'identité du projet. Il dit :
+- **qui est le projet** : ses coordonnées, `groupId` (l'organisation), `artifactId` (le nom du projet) et `version` ;
+- **ce qu'il produit** : `packaging`, ici un `jar` ;
+- **ce dont il a besoin** : ses dépendances, ici JUnit pour les tests.
+
+Il ne dit nulle part comment compiler, où trouver les sources, ni comment lancer les tests. Et pourtant, le projet se construit. Comment Maven sait-il quoi faire ?
+
+## Ce que Maven sait déjà
+
+Maven repose sur des **conventions** : tant qu'un projet les suit, il n'a rien à déclarer.
+
+**Une arborescence convenue.** Les sources sont dans `src/main/java`, les tests dans `src/test/java`, et tout ce que Maven produit va dans `target/`.
+
+**Un déroulé convenu, le cycle de vie.** Construire un projet, c'est toujours la même suite d'étapes, appelées **phases**, dans le même ordre :
 
 ```text
 validate → compile → test → package → verify → install → deploy
 ```
 
-Lancer une phase lance **toutes celles qui la précèdent**. Une phase ne fait rien par elle-même : des **goals** de plugins y sont attachés. Pour un `jar`, Maven attache par défaut :
+Quand on demande une phase à Maven, il exécute **toutes les phases qui la précèdent**, puis celle-là. `mvn package` vérifie, compile, teste, puis assemble le jar.
+
+**Des outils attachés à chaque phase.** Une phase n'est qu'une étape du déroulé : le travail est fait par des **plugins**. Chaque plugin propose des actions, appelées **goals**. Pour un projet qui produit un jar, Maven attache d'office un goal à chaque phase :
 
 | Phase | Goal attaché | Ce qu'il fait |
 |---|---|---|
-| `compile` | `compiler:compile` | compile `src/main/java` dans `target/classes` |
-| `test` | `surefire:test` | lance les tests de `src/test/java` |
-| `package` | `jar:jar` | assemble `target/<artifactId>-<version>.jar` |
-| `install` | `install:install` | copie le jar dans le dépôt local, `~/.m2/repository` |
-| `deploy` | `deploy:deploy` | publie le jar dans un dépôt distant |
+| `compile` | `compile` du plugin `compiler` | compile `src/main/java` dans `target/classes` |
+| `test` | `test` du plugin `surefire` | lance les tests de `src/test/java` |
+| `package` | `jar` du plugin `jar` | assemble le jar dans `target/` |
+| `install` | `install` du plugin `install` | copie le jar dans le dépôt local de la machine |
+| `deploy` | `deploy` du plugin `deploy` | publie le jar dans un dépôt partagé |
 
-`clean` appartient à un autre cycle de vie : il vide `target/`. On l'enchaîne au besoin : `mvn clean verify`.
-
-Chaque ligne `--- plugin:version:goal (exécution) @ projet ---` du journal dit quel plugin travaille, dans quelle version, et pourquoi.
+Enfin, `clean` est à part : il vide `target/`. On le place avant une phase quand on veut repartir de zéro : `mvn clean verify`.
 
 ## Travaux pratiques
 
-Toutes les commandes se lancent **à la racine du dépôt**. Sous Windows, hors du Dev Container : `.\mvnw.cmd` au lieu de `./mvnw`.
+Vous allez lancer Maven sur le projet de l'exercice, et observer ce qu'il fait dans son **journal**, c'est-à-dire ce qu'il affiche dans le terminal pendant le build.
 
-### 1. Les phases s'enchaînent
+Toutes les commandes se lancent **à la racine du dépôt**. Le dépôt fournit Maven : on l'appelle par `./mvnw`, ou `.\mvnw.cmd` sous Windows en dehors du Dev Container. L'option `-f` indique le projet à construire.
 
-```bash
-./mvnw -f 01-pom-et-cycle-de-vie/exercice validate
-```
-
-Le build réussit. Le dossier `exercice/target/` existe-t-il ?
+### 1. Lire le journal
 
 ```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice compile
+```
+
+Le journal annonce chaque étape par une ligne de ce genre :
+
+```text
+[INFO] --- compiler:3.16.0:compile (default-compile) @ facture ---
+```
+
+Elle se lit ainsi :
+
+| Partie | Signification |
+|---|---|
+| `compiler` | le plugin qui travaille |
+| `3.16.0` | sa version |
+| `compile` | le goal exécuté |
+| `default-compile` | le nom de l'exécution ; `default-…` signale un goal attaché d'office par Maven |
+| `@ facture` | le projet concerné, par son `artifactId` |
+
+Quelles lignes de ce genre voyez-vous ? Quel dossier est apparu dans `exercice/target/` ?
+
+### 2. Les phases s'enchaînent
+
+```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice test
 ```
 
-Dans le journal de `test`, relevez les lignes `--- … ---`. Pour chacune : quel plugin, quelle version, quel goal ?
+Relevez les lignes `--- … ---` : la compilation a-t-elle été refaite ? Combien de tests ont été lancés ?
 
 ```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice package
 ```
 
-Quel fichier est apparu dans `target/` ? D'où vient son nom ?
+Quel fichier est apparu dans `exercice/target/` ? D'où vient son nom ?
 
-### 2. Le dépôt local
+### 3. Le dépôt local
 
 ```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice install
 ```
 
-Retrouvez le jar dans `~/.m2/repository`. Quel chemin suit-il, et pourquoi celui-là ?
+Maven copie le jar dans son **dépôt local**, le dossier `~/.m2/repository`, où il range aussi toutes les dépendances qu'il télécharge. Retrouvez-y le jar de l'exercice : quel chemin suit-il ?
 
-### 3. Le POM effectif
+### 4. Le POM que Maven utilise vraiment
 
-Le `pom.xml` de l'exercice ne déclare aucun plugin. Demandez à Maven le POM qu'il utilise vraiment :
+Le `pom.xml` de l'exercice ne nomme aucun plugin. Pourtant, le journal affiche des plugins avec leur version. Demandez à Maven le POM complet qu'il utilise, appelé **POM effectif** :
 
 ```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice help:effective-pom -Doutput=target/pom-effectif.xml
 ```
 
-Ouvrez `exercice/target/pom-effectif.xml`. Quelle version de `maven-surefire-plugin` y trouvez-vous ? Quelle adresse de dépôt ? Ni l'une ni l'autre n'est dans le `pom.xml` : d'où viennent-elles ?
+Ouvrez `exercice/target/pom-effectif.xml`, et cherchez `maven-surefire-plugin` : quelle version y trouvez-vous ? Cherchez ensuite `<repositories>` : quelle adresse y est indiquée ?
 
-### 4. Une phase, ou un goal seul
+### 5. Une phase, ou un goal seul
+
+On peut aussi demander directement un goal, sans passer par une phase :
 
 ```bash
 ./mvnw -f 01-pom-et-cycle-de-vie/exercice clean jar:jar
 ```
 
-Le build réussit, avec un avertissement. Lequel ? Ouvrez le jar produit : que contient-il ? Pourquoi est-ce différent de `package` ?
+Le build réussit, avec un avertissement : lequel ? Que contient le jar produit ? Pourquoi est-il différent de celui de l'exercice 2 ?
 
 ## Réponses
 
 <details>
-<summary>1. Les phases s'enchaînent</summary>
+<summary>1. Lire le journal</summary>
 
-- `validate` vérifie seulement que le projet est correct : rien n'est compilé, `target/` n'existe pas.
-- `test` affiche, dans l'ordre : `resources:resources`, `compiler:compile`, `resources:testResources`, `compiler:testCompile`, `surefire:test`. Les phases `compile` et `test` ont été rejouées : chaque commande repart du début du cycle.
-- Les versions affichées (par exemple `compiler:3.16.0`, `surefire:3.6.0`) n'apparaissent nulle part dans le projet : ce sont celles que choisit la version de Maven utilisée, ici celle du wrapper.
-- `package` produit `target/facture-1.0.0-SNAPSHOT.jar` : `artifactId`, tiret, `version`.
+Deux lignes : `resources:resources`, qui copie les fichiers de `src/main/resources` (il n'y en a pas ici), puis `compiler:compile`. Le dossier `target/classes` contient la classe `Facture` compilée.
 </details>
 
 <details>
-<summary>2. Le dépôt local</summary>
+<summary>2. Les phases s'enchaînent</summary>
 
-`~/.m2/repository/io/github/formatttech/formation/maven/facture/1.0.0-SNAPSHOT/facture-1.0.0-SNAPSHOT.jar` : le `groupId` devient une suite de dossiers, puis l'`artifactId`, puis la version. Un autre projet de la machine qui déclare cette dépendance la trouve là.
+Oui : `test` rejoue tout le début du cycle. Le journal montre `resources:resources`, `compiler:compile`, puis `resources:testResources`, `compiler:testCompile` (la compilation des tests) et `surefire:test`, qui lance 2 tests. Maven ne recompile en réalité que ce qui a changé, mais chaque phase demandée repart toujours du début du cycle.
 
-`install` ne sert qu'à ça : rendre le jar disponible aux autres projets **de la même machine**. Pour vérifier un projet, `verify` suffit.
+`package` ajoute `jar:jar`, et produit `target/facture-1.0.0-SNAPSHOT.jar` : l'`artifactId`, un tiret, puis la `version`.
 </details>
 
 <details>
-<summary>3. Le POM effectif</summary>
+<summary>3. Le dépôt local</summary>
 
-Le POM effectif est le `pom.xml`, complété par ses parents éventuels et par le **super POM**, le POM implicite de Maven. Les versions des plugins du cycle de vie viennent de la version de Maven ; le dépôt `https://repo.maven.apache.org/maven2`, Maven Central, vient du super POM.
+`~/.m2/repository/io/github/formatttech/formation/maven/facture/1.0.0-SNAPSHOT/facture-1.0.0-SNAPSHOT.jar` : le `groupId` devient une suite de dossiers, puis viennent l'`artifactId` et la version. C'est le même rangement que sur Maven Central, le dépôt public d'où viennent les dépendances.
 
-En cas de doute sur une configuration, le POM effectif est la référence : il montre ce que Maven exécutera, pas ce qu'on croit avoir écrit.
+`install` ne sert qu'à rendre le jar disponible aux autres projets **de la même machine**. Pour vérifier un projet, `verify` suffit.
 </details>
 
 <details>
-<summary>4. Une phase, ou un goal seul</summary>
+<summary>4. Le POM que Maven utilise vraiment</summary>
 
-Avertissement : `JAR will be empty - no content was marked for inclusion!`. Le jar ne contient que ses métadonnées (`META-INF`), aucune classe.
+Une version précise de `maven-surefire-plugin` (3.6.0 avec le Maven de ce dépôt), et l'adresse `https://repo.maven.apache.org/maven2`, celle de Maven Central. Ni l'une ni l'autre n'est dans `pom.xml` : elles viennent de Maven lui-même, qui complète chaque POM par ses valeurs par défaut. C'est pourquoi le projet se construit sans rien déclarer.
 
-Un goal lancé seul (`jar:jar`) ne lance que lui : rien n'a compilé, après le `clean`. Une phase (`package`) lance tout le cycle jusqu'à elle. Dans la vie courante, on lance des phases ; un goal seul sert à un outil ponctuel (`help:effective-pom`, `dependency:tree`).
+Quand on se demande ce que Maven va faire, c'est le POM effectif qu'il faut lire, pas seulement `pom.xml`.
+</details>
+
+<details>
+<summary>5. Une phase, ou un goal seul</summary>
+
+L'avertissement : `JAR will be empty - no content was marked for inclusion!`. Le jar ne contient que des informations sur le projet (dossier `META-INF`), et aucune classe.
+
+Un goal demandé seul ne lance que lui. Après le `clean`, rien n'avait été compilé : `jar:jar` a assemblé un jar vide. Une phase, au contraire, lance tout le cycle jusqu'à elle. Au quotidien, on lance des phases ; un goal seul sert à un besoin ponctuel, comme `help:effective-pom`.
 </details>
 
 ## À retenir
 
-- On lance une **phase** ; elle entraîne toutes les précédentes.
-- `verify` pour vérifier un projet, `install` seulement quand un autre projet de la machine en a besoin.
-- Le journal (`--- plugin:version:goal ---`) et le POM effectif disent ce que Maven fait réellement.
-- `clean` n'est pas systématique ; il devient nécessaire quand une classe est renommée ou supprimée, car son ancien `.class` reste dans `target/`.
+- Le POM décrit **ce qu'est** le projet ; Maven sait **comment** le construire, par ses conventions.
+- On lance une **phase**, et elle entraîne toutes les précédentes. `verify` pour vérifier un projet ; `install` seulement si un autre projet de la machine en a besoin.
+- Le **journal** dit quel plugin travaille et dans quelle version ; le **POM effectif** dit tout ce que Maven utilise, valeurs par défaut comprises.
+- `clean` n'est pas systématique ; il sert quand une classe a été renommée ou supprimée, car son ancienne version compilée reste dans `target/`.
