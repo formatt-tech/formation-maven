@@ -5,7 +5,7 @@ set -u
 for pom in */exercice*/pom.xml; do
   projet=$(dirname "$pom")
   echo "Préparation de $projet"
-  ./mvnw -B -ntp -q -f "$projet" verify dependency:tree install:help \
+  ./mvnw -B -ntp -q -f "$projet" verify dependency:tree dependency:analyze install:help \
     help:effective-pom -Doutput=target/pom-effectif.xml > /dev/null 2>&1 || true
   ./mvnw -B -ntp -q -f "$projet" clean > /dev/null 2>&1 || true
 done

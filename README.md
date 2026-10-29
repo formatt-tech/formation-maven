@@ -26,7 +26,7 @@ Chaque module est indépendant ; l'ensemble tient en une journée.
 | # | Module | Durée |
 |---|---|---|
 | 1 | [Le POM et le cycle de vie](01-pom-et-cycle-de-vie/README.md) | 45 min |
-| 2 | Les dépendances : portées, transitivité, exclusions (à venir) | |
+| 2 | [Les dépendances](02-dependances/README.md) | 1 h |
 | 3 | Gérer les versions : `dependencyManagement`, BOM (à venir) | |
 | 4 | Héritage et agrégation : parent, modules, reactor (à venir) | |
 | 5 | Les plugins : versions, configuration, exécutions (à venir) | |
