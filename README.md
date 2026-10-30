@@ -30,8 +30,8 @@ L'ensemble tient en une demi-journée ; chaque module peut aussi se suivre seul.
 | 3 | [Gérer les versions](03-versions/README.md) | 25 min |
 | 4 | [Héritage et agrégation](04-heritage-et-agregation/README.md) | 30 min |
 | 5 | [Les plugins](05-plugins/README.md) | 30 min |
-| 6 | Les tests : Surefire et Failsafe (à venir) | |
-| 7 | Profils et propriétés (à venir) | |
+| 6 | [Les tests : Surefire et Failsafe](06-tests/README.md) | 35 min |
+| 7 | [Profils et propriétés](07-profils-et-proprietes/README.md) | 35 min |
 | 8 | L'environnement : wrapper, `settings.xml`, miroirs (à venir) | |
 | 9 | Diagnostiquer un build (à venir) | |
 
