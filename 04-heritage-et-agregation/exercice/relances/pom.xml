@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.formatttech.formation.maven</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>relances</artifactId>
+
+  <dependencies>
+    <!-- Un autre projet de l'entreprise : son jar doit être disponible pour construire celui-ci -->
+    <dependency>
+      <groupId>io.github.formatttech.formation.maven</groupId>
+      <artifactId>facturation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>

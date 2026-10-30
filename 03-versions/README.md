@@ -1,6 +1,6 @@
 # 3. Gérer les versions
 
-**Durée** : 45 minutes.
+**Durée** : 25 minutes.
 
 **À la fin de ce module, vous saurez** :
 - reconnaître une famille de bibliothèques dont les versions ne s'accordent pas ;

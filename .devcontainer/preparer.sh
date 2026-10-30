@@ -2,7 +2,7 @@
 # Télécharge à l'avance tout ce dont les exercices ont besoin : Maven, plugins, dépendances.
 # Les exercices peuvent échouer exprès : un échec ici n'arrête pas la préparation.
 set -u
-for pom in */exercice*/pom.xml; do
+for pom in $(find . -path '*/exercice/*' -name pom.xml -not -path '*/target/*' | sort); do
   projet=$(dirname "$pom")
   echo "Préparation de $projet"
   ./mvnw -B -ntp -q -f "$projet" verify dependency:tree dependency:analyze install:help \

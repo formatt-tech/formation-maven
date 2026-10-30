@@ -1,6 +1,6 @@
 # 2. Les dépendances
 
-**Durée** : 1 heure.
+**Durée** : 30 minutes.
 
 **À la fin de ce module, vous saurez** :
 - retrouver toutes les bibliothèques d'un projet, y compris celles qu'on n'a pas déclarées, et d'où elles viennent ;
