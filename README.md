@@ -21,15 +21,15 @@ dépôt s'ouvre aussi en Dev Container dans VS Code ou IntelliJ.
 
 ## Programme
 
-Chaque module est indépendant ; l'ensemble tient en une journée.
+L'ensemble tient en une demi-journée ; chaque module peut aussi se suivre seul.
 
 | # | Module | Durée |
 |---|---|---|
-| 1 | [Le POM et le cycle de vie](01-pom-et-cycle-de-vie/README.md) | 45 min |
-| 2 | [Les dépendances](02-dependances/README.md) | 1 h |
-| 3 | [Gérer les versions](03-versions/README.md) | 45 min |
-| 4 | Héritage et agrégation : parent, modules, reactor (à venir) | |
-| 5 | Les plugins : versions, configuration, exécutions (à venir) | |
+| 1 | [Le POM et le cycle de vie](01-pom-et-cycle-de-vie/README.md) | 30 min |
+| 2 | [Les dépendances](02-dependances/README.md) | 30 min |
+| 3 | [Gérer les versions](03-versions/README.md) | 25 min |
+| 4 | [Héritage et agrégation](04-heritage-et-agregation/README.md) | 30 min |
+| 5 | [Les plugins](05-plugins/README.md) | 30 min |
 | 6 | Les tests : Surefire et Failsafe (à venir) | |
 | 7 | Profils et propriétés (à venir) | |
 | 8 | L'environnement : wrapper, `settings.xml`, miroirs (à venir) | |

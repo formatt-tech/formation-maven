@@ -1,6 +1,6 @@
 # 1. Le POM et le cycle de vie
 
-**Durée** : 45 minutes.
+**Durée** : 30 minutes.
 
 **À la fin de ce module, vous saurez** :
 - ce que Maven fait quand on lance `mvn verify` ;

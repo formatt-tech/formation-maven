@@ -22,7 +22,8 @@ jobs:
           cache: maven
       - name: Construire chaque exercice
         run: |
-          for pom in */exercice*/pom.xml; do
+          # Chaque projet d'exercice : exercice/pom.xml, ou exercice/<projet>/pom.xml quand l'exercice en a plusieurs
+          for pom in $(find . -path '*/exercice/*' -name pom.xml -not -path '*/target/*' | sort); do
             projet=$(dirname "$pom")
             echo "::group::$projet"
             if [ -f "$projet/echec-attendu.txt" ]; then
