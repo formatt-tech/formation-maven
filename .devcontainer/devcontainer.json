@@ -7,11 +7,8 @@
       "jdkDistro": "tem"
     }
   },
-  "postCreateCommand": "bash .devcontainer/preparer.sh",
+  "updateContentCommand": "bash .devcontainer/preparer.sh",
   "customizations": {
-    "codespaces": {
-      "openFiles": ["README.md"]
-    },
     "vscode": {
       "extensions": [
         "vscjava.vscode-java-pack"
@@ -19,7 +16,8 @@
       "settings": {
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
-        }
+        },
+        "workbench.editor.enablePreview": false
       }
     }
   }

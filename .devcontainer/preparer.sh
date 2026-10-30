@@ -9,4 +9,8 @@ for pom in $(find . -path '*/exercice/*' -name pom.xml -not -path '*/target/*' |
     help:effective-pom -Doutput=target/pom-effectif.xml > /dev/null 2>&1 || true
   ./mvnw -B -ntp -q -f "$projet" clean > /dev/null 2>&1 || true
 done
+# Les plugins que les exercices ajoutent au POM en cours de route
+for plugin in maven-failsafe-plugin:3.6.1 maven-wrapper-plugin:3.3.4; do
+  ./mvnw -B -ntp -q "org.apache.maven.plugins:$plugin:help" > /dev/null 2>&1 || true
+done
 echo "Environnement prêt."

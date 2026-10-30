@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Les réglages d'un poste d'entreprise : tout téléchargement passe par le dépôt de l'entreprise -->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
+  <mirrors>
+    <mirror>
+      <id>entreprise</id>
+      <mirrorOf>*</mirrorOf>
+      <url>https://nexus.mon-entreprise.example/repository/maven-public/</url>
+    </mirror>
+  </mirrors>
+</settings>
